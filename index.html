@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -109,6 +109,12 @@
                         <div class="menu-card-icon"></div>
                         <div class="menu-card-title">معارك Boss</div>
                         <p class="menu-card-desc">فوات الأوان والكمالية</p>
+                    </div>
+
+                    <div class="menu-card resilience-card" onclick="showResilienceHub()" role="button" tabindex="0" aria-label="مركز الصمود النفسي">
+                        <div class="menu-card-icon">🧠</div>
+                        <div class="menu-card-title">مركز الصمود النفسي</div>
+                        <p class="menu-card-desc">أدوات ذكية لكسر التجمد وتهدئة الجهاز العصبي</p>
                     </div>
 
                     <div class="menu-card" onclick="showStats()" role="button" tabindex="0" aria-label="الإنجازات والإحصائيات">
@@ -250,6 +256,174 @@
                 <div id="xpGain" style="color: var(--info); font-weight: bold; margin-bottom: 20px; display: none;"></div>
                 <button class="btn btn-primary" onclick="returnToMenu()">عودة للقائمة</button>
             </section>
+
+            <!-- ======== Resilience Hub Screen ======== -->
+            <section id="resilienceHubScreen" class="screen" aria-label="مركز الصمود النفسي">
+                <h2 class="hub-title">🧠 مركز الصمود النفسي</h2>
+                <p class="hub-subtitle">أدوات ذكية مبنية على علم الأعصاب والعلاج السلوكي المعرفي لكسر حالة التجمد</p>
+                <div class="hub-grid">
+                    <div class="hub-card hub-card-radar" onclick="showNervousRadar()" role="button" tabindex="0">
+                        <div class="hub-card-icon">📡</div>
+                        <div class="hub-card-title">رادار الحالة العصبية</div>
+                        <p class="hub-card-desc">افحص جهازك العصبي واحصل على تمرين تهدئة</p>
+                    </div>
+                    <div class="hub-card hub-card-experiment" onclick="showBehaviorLab()" role="button" tabindex="0">
+                        <div class="hub-card-icon">🧪</div>
+                        <div class="hub-card-title">مختبر التجارب السلوكية</div>
+                        <p class="hub-card-desc">صمّم تجربة صغيرة لاختبار أفكارك المقيدة</p>
+                    </div>
+                    <div class="hub-card hub-card-well" onclick="showCoreBeliefWell()" role="button" tabindex="0">
+                        <div class="hub-card-icon">🕳️</div>
+                        <div class="hub-card-title">بئر المعتقدات الجوهرية</div>
+                        <p class="hub-card-desc">اكتشف جذور أفكارك بتقنية السهم الهابط</p>
+                    </div>
+                    <div class="hub-card hub-card-simulator" onclick="showScenarioSim()" role="button" tabindex="0">
+                        <div class="hub-card-icon">🎭</div>
+                        <div class="hub-card-title">محاكي المواقف الآمن</div>
+                        <p class="hub-card-desc">تمثيل أدوار مع AI لمواقف تخشاها</p>
+                    </div>
+                    <div class="hub-card hub-card-deconstructor" onclick="showLogicDeconstructor()" role="button" tabindex="0">
+                        <div class="hub-card-icon">🔬</div>
+                        <div class="hub-card-title">مفكك التعميم</div>
+                        <p class="hub-card-desc">فكّك جمل "دائماً" و"أبداً" بالمنطق</p>
+                    </div>
+                    <div class="hub-card hub-card-micro" onclick="showMicroAction()" role="button" tabindex="0">
+                        <div class="hub-card-icon">👣</div>
+                        <div class="hub-card-title">رفيق الخطوات المجهرية</div>
+                        <p class="hub-card-desc">خطوة واحدة فقط لكسر التجمد</p>
+                    </div>
+                </div>
+                <button class="btn btn-secondary" onclick="returnToMenu()">⬅ عودة</button>
+            </section>
+
+            <!-- ======== 1. Nervous System Radar Screen ======== -->
+            <section id="nervousRadarScreen" class="screen" aria-label="رادار الحالة العصبية">
+                <h2 class="feature-title">📡 رادار الحالة العصبية</h2>
+                <p class="feature-desc">أخبرني عن أحاسيسك الجسدية الآن، وسأساعدك على تهدئة جهازك العصبي قبل مواجهة الأفكار.</p>
+                <div id="radarChecklist" class="radar-checklist">
+                    <h3 class="checklist-title">ماذا تشعر الآن؟</h3>
+                    <label class="radar-option"><input type="checkbox" name="symptom" value="heartfast"> 💓 ضربات قلبي سريعة</label>
+                    <label class="radar-option"><input type="checkbox" name="symptom" value="muscletense"> 💪 شد في العضلات</label>
+                    <label class="radar-option"><input type="checkbox" name="symptom" value="breathing"> 🌬️ صعوبة في التنفس</label>
+                    <label class="radar-option"><input type="checkbox" name="symptom" value="numb"> 🧶 تنميل أو برودة</label>
+                    <label class="radar-option"><input type="checkbox" name="symptom" value="dizzy"> 😵 دوخة أو ضبابية</label>
+                    <label class="radar-option"><input type="checkbox" name="symptom" value="stomach"> 🤢 اضطراب في المعدة</label>
+                    <label class="radar-option"><input type="checkbox" name="symptom" value="shake"> 😖 رجفة أو ارتعاش</label>
+                    <label class="radar-option"><input type="checkbox" name="symptom" value="frozen"> ⛄ شعور بالتجمد التام</label>
+                </div>
+                <button id="radarAnalyzeBtn" class="btn btn-primary" style="background: linear-gradient(135deg, #06b6d4, #0891b2);" onclick="analyzeNervousState()">
+                    <span id="radarBtnText">📡 تحليل الحالة</span>
+                    <div id="radarLoader" class="loader" style="display:none;"></div>
+                </button>
+                <div id="radarResult" class="radar-result" style="display:none;"></div>
+                <div id="breathingExercise" class="breathing-exercise" style="display:none;">
+                    <div class="breathing-circle" id="breathingCircle">
+                        <span id="breathingText">استعد</span>
+                    </div>
+                    <div id="breathingTimer" class="breathing-timer">30 ثانية</div>
+                    <button class="btn btn-primary" onclick="startBreathingExercise()" id="startBreathBtn">🌬️ ابدأ تمرين التنفس</button>
+                </div>
+                <button class="btn btn-secondary" onclick="showResilienceHub()">⬅ عودة للمركز</button>
+            </section>
+
+            <!-- ======== 2. Behavioral Experiment Lab ======== -->
+            <section id="behaviorLabScreen" class="screen" aria-label="مختبر التجارب السلوكية">
+                <h2 class="feature-title">🧪 مختبر التجارب السلوكية</h2>
+                <p class="feature-desc">اكتب الفكرة التي تقيدك، وسيصمم لك الذكاء الاصطناعي تجربة صغيرة لاختبارها.</p>
+                <div id="labStep1">
+                    <textarea id="labBeliefInput" class="text-input" style="height: 100px;" placeholder="اكتب الفكرة المقيدة... (مثلاً: سأفشل إذا تحدثت أمام الناس)"></textarea>
+                    <button id="labDesignBtn" class="btn btn-primary" style="background: linear-gradient(135deg, #f59e0b, #d97706);" onclick="designExperiment()">
+                        <span id="labBtnText">🧪 صمّم التجربة</span>
+                        <div id="labLoader" class="loader" style="display:none;"></div>
+                    </button>
+                </div>
+                <div id="labExperiment" class="lab-experiment" style="display:none;"></div>
+                <div id="labStep2" style="display:none;">
+                    <h3 style="color: var(--gold); margin: 20px 0 10px;">📝 سجّل النتيجة:</h3>
+                    <textarea id="labResultInput" class="text-input" style="height: 100px;" placeholder="ماذا حدث فعلاً عندما جربت؟"></textarea>
+                    <button class="btn btn-primary" onclick="recordExperimentResult()">✅ سجّل النتيجة</button>
+                </div>
+                <div id="labComparison" class="lab-comparison" style="display:none;"></div>
+                <button class="btn btn-secondary" onclick="showResilienceHub()">⬅ عودة للمركز</button>
+            </section>
+
+            <!-- ======== 3. Core Belief Well ======== -->
+            <section id="coreBeliefScreen" class="screen" aria-label="بئر المعتقدات الجوهرية">
+                <h2 class="feature-title">🕳️ بئر المعتقدات الجوهرية</h2>
+                <p class="feature-desc">سنستخدم تقنية السهم الهابط للغوص من الفكرة السطحية إلى المعتقد الجذري.</p>
+                <div class="well-chat" id="wellChat"></div>
+                <div id="wellInputArea" class="well-input-area">
+                    <textarea id="wellInput" class="text-input" style="height: 80px; margin-bottom: 10px;" placeholder="اكتب الفكرة التلقائية (مثلاً: أخطأت في الكود)"></textarea>
+                    <button id="wellSendBtn" class="btn btn-primary" style="background: linear-gradient(135deg, #6366f1, #4f46e5);" onclick="wellSendMessage()">
+                        <span id="wellBtnText">⬇️ ابدأ الغوص</span>
+                        <div id="wellLoader" class="loader" style="display:none;"></div>
+                    </button>
+                </div>
+                <button class="btn btn-secondary" onclick="showResilienceHub()">⬅ عودة للمركز</button>
+            </section>
+
+            <!-- ======== 4. Scenario Simulator ======== -->
+            <section id="scenarioSimScreen" class="screen" aria-label="محاكي المواقف الآمن">
+                <h2 class="feature-title">🎭 محاكي المواقف الآمن</h2>
+                <p class="feature-desc">صف الموقف الذي تخشاه، وسيلعب الذكاء الاصطناعي دور الشخص الآخر لتتدرب على التعامل.</p>
+                <div id="simSetup">
+                    <textarea id="simScenarioInput" class="text-input" style="height: 100px;" placeholder="صف الموقف... (مثلاً: مواجهة مديري لطلب زيادة)"></textarea>
+                    <button id="simStartBtn" class="btn btn-primary" style="background: linear-gradient(135deg, #ec4899, #be185d);" onclick="startScenarioSim()">
+                        <span id="simBtnText">🎭 ابدأ المحاكاة</span>
+                        <div id="simStartLoader" class="loader" style="display:none;"></div>
+                    </button>
+                </div>
+                <div class="sim-chat" id="simChat" style="display:none;"></div>
+                <div id="simResponseArea" style="display:none;">
+                    <textarea id="simUserResponse" class="text-input" style="height: 80px;" placeholder="اكتب ردك..."></textarea>
+                    <button id="simRespondBtn" class="btn btn-primary" style="background: linear-gradient(135deg, #ec4899, #be185d);" onclick="sendSimResponse()">
+                        <span id="simRespondText">💬 أرسل ردك</span>
+                        <div id="simRespondLoader" class="loader" style="display:none;"></div>
+                    </button>
+                    <button class="btn btn-secondary" onclick="endScenarioSim()">✅ إنهاء المحاكاة</button>
+                </div>
+                <div id="simFeedback" style="display:none;"></div>
+                <button class="btn btn-secondary" onclick="showResilienceHub()">⬅ عودة للمركز</button>
+            </section>
+
+            <!-- ======== 5. Logic Deconstructor ======== -->
+            <section id="logicDeconScreen" class="screen" aria-label="مفكك التعميم">
+                <h2 class="feature-title">🔬 مفكك التعميم</h2>
+                <p class="feature-desc">اكتب الجملة التي تحتوي على "دائماً" أو "أبداً" أو "الكل"، وسيفككها الذكاء الاصطناعي بالمنطق.</p>
+                <textarea id="deconInput" class="text-input" style="height: 100px;" placeholder="اكتب الجملة المعممة... (مثلاً: أنا أفشل دائماً)"></textarea>
+                <button id="deconBtn" class="btn btn-primary" style="background: linear-gradient(135deg, #14b8a6, #0d9488);" onclick="deconstructStatement()">
+                    <span id="deconBtnText">🔬 فكّك التعميم</span>
+                    <div id="deconLoader" class="loader" style="display:none;"></div>
+                </button>
+                <div id="deconResult" class="decon-result" style="display:none;"></div>
+                <button class="btn btn-secondary" onclick="showResilienceHub()">⬅ عودة للمركز</button>
+            </section>
+
+            <!-- ======== 6. Micro-Action Buddy ======== -->
+            <section id="microActionScreen" class="screen" aria-label="رفيق الخطوات المجهرية">
+                <h2 class="feature-title">👣 رفيق الخطوات المجهرية</h2>
+                <p class="feature-desc">عندما تشعر بالتجمد التام، اطلب خطوة واحدة فقط. لا نصائح كبيرة، فقط فعل بسيط.</p>
+                <div class="micro-state-area">
+                    <h3 style="color: var(--muted); margin-bottom: 15px;">كيف تشعر الآن؟</h3>
+                    <textarea id="microStateInput" class="text-input" style="height: 80px;" placeholder="صف حالتك باختصار... (مثلاً: متجمد تماماً، لا أستطيع الحركة)"></textarea>
+                    <button id="microBtn" class="btn btn-primary" style="background: linear-gradient(135deg, #f97316, #ea580c);" onclick="getMicroAction()">
+                        <span id="microBtnText">👣 أعطني خطوة واحدة فقط</span>
+                        <div id="microLoader" class="loader" style="display:none;"></div>
+                    </button>
+                </div>
+                <div id="microActionCard" class="micro-action-card" style="display:none;">
+                    <div class="micro-action-icon" id="microActionIcon"></div>
+                    <div class="micro-action-text" id="microActionText"></div>
+                    <div class="micro-action-timer" id="microActionTimer" style="display:none;"></div>
+                    <button class="btn btn-primary" onclick="completeMicroAction()" id="microCompleteBtn" style="display:none;">✅ فعلتها!</button>
+                </div>
+                <div id="microCelebration" class="micro-celebration" style="display:none;"></div>
+                <button class="btn btn-secondary" onclick="showResilienceHub()">⬅ عودة للمركز</button>
+            </section>
+
+
+            
+
         </main>
     </div>
 
