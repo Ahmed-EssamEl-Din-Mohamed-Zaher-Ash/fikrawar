@@ -1,0 +1,267 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="description" content="معارك الأفكار - لعبة تفاعلية مبنية على العلاج السلوكي المعرفي (CBT) لمواجهة الأفكار السلبية وهزيمتها بالمنطق والإيجابية، مدعومة بالذكاء الاصطناعي.">
+    <meta name="keywords" content="علاج سلوكي معرفي, CBT, أفكار سلبية, صحة نفسية, ذكاء اصطناعي, لعبة علاجية, تطوير ذات">
+    <meta name="author" content="أحمد عاشور">
+    <meta name="theme-color" content="#0f1419">
+    <meta name="color-scheme" content="dark">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="معارك الأفكار | واجه أفكارك السلبية بالذكاء الاصطناعي">
+    <meta property="og:description" content="لعبة تفاعلية مبنية على العلاج السلوكي المعرفي لمواجهة الأفكار السلبية وهزيمتها بالمنطق.">
+    <meta property="og:image" content="https://fikrawar.me/og-image.png">
+    <meta property="og:url" content="https://fikrawar.me">
+    <meta property="og:locale" content="ar_EG">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="معارك الأفكار | واجه أفكارك السلبية">
+    <meta name="twitter:description" content="لعبة CBT تفاعلية مدعومة بالذكاء الاصطناعي لمواجهة الأفكار السلبية.">
+    <meta name="twitter:image" content="https://fikrawar.me/og-image.png">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://fikrawar.me">
+
+    <title>معارك الأفكار | واجه أفكارك السلبية بالذكاء الاصطناعي</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'></text></svg>" type="image/svg+xml">
+
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- خطوط جوجل -->
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;700;900&family=Tajawal:wght@500;700&family=Fira+Code&display=swap" rel="stylesheet">
+
+    <!-- ملف التنسيقات -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "معارك الأفكار",
+        "description": "لعبة تفاعلية مبنية على العلاج السلوكي المعرفي لمواجهة الأفكار السلبية",
+        "applicationCategory": "HealthApplication",
+        "operatingSystem": "Web",
+        "author": {
+            "@type": "Person",
+            "name": "أحمد عاشور"
+        },
+        "inLanguage": "ar",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        }
+    }
+    </script>
+</head>
+<body>
+    <div id="notification" class="notification" role="alert" aria-live="polite"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="game-header">
+            <h1 class="game-title"> معارك الأفكار</h1>
+            <p class="game-subtitle">مدعوم بالذكاء الاصطناعي </p>
+            <div id="playerTitleDisplay" style="margin-top: 10px;"></div>
+        </header>
+
+        <!-- Main Menu -->
+        <main>
+            <div id="menuScreen" class="screen active">
+                <nav class="menu-grid" aria-label="القائمة الرئيسية">
+                    <!-- AI Feature: Custom Battle -->
+                    <div class="menu-card ai-card" onclick="showCustomBattle()" role="button" tabindex="0" aria-label="معركة خاصة بالذكاء الاصطناعي">
+                        <div class="menu-card-icon"></div>
+                        <div class="menu-card-title">معركة خاصة </div>
+                        <p class="menu-card-desc">أخبر الذكاء الاصطناعي عن مخاوفك وسيخلق لك وحشاً مخصصاً لتهزمه.</p>
+                    </div>
+
+                    <!-- Thought Journal -->
+                    <div class="menu-card" onclick="showThoughtJournal()" role="button" tabindex="0" aria-label="دفتر الأفكار">
+                        <div class="menu-card-icon"></div>
+                        <div class="menu-card-title">دفتر الأفكار</div>
+                        <p class="menu-card-desc">سجّل أفكارك وواجهها بمساعدة AI</p>
+                    </div>
+
+                    <div class="menu-card coding-card" onclick="showStudyCamp()" role="button" tabindex="0" aria-label="معسكر المذاكرة">
+                        <div class="menu-card-icon"></div>
+                        <div class="menu-card-title">معسكر المذاكرة</div>
+                        <p class="menu-card-desc">واجه أفكار الفشل البرمجي</p>
+                    </div>
+
+                    <div class="menu-card" onclick="startQuickBattle()" role="button" tabindex="0" aria-label="معركة سريعة">
+                        <div class="menu-card-icon"></div>
+                        <div class="menu-card-title">معركة سريعة</div>
+                        <p class="menu-card-desc">عدو عشوائي</p>
+                    </div>
+
+                    <div class="menu-card" onclick="showBossBattles()" role="button" tabindex="0" aria-label="معارك الزعماء">
+                        <div class="menu-card-icon"></div>
+                        <div class="menu-card-title">معارك Boss</div>
+                        <p class="menu-card-desc">فوات الأوان والكمالية</p>
+                    </div>
+
+                    <div class="menu-card" onclick="showStats()" role="button" tabindex="0" aria-label="الإنجازات والإحصائيات">
+                        <div class="menu-card-icon"></div>
+                        <div class="menu-card-title">إنجازاتي</div>
+                        <p class="menu-card-desc">إحصائيات وألقاب</p>
+                    </div>
+                </nav>
+            </div>
+
+            <!-- Thought Journal Screen -->
+            <section id="journalScreen" class="screen" aria-label="دفتر الأفكار السلبية">
+                <h2 style="color: var(--accent); text-align: center; margin-bottom: 20px;"> دفتر الأفكار السلبية</h2>
+                <p style="text-align: center; color: var(--muted); margin-bottom: 20px;">
+                    اكتب الفكرة التي تزعجك واحفظها. يمكنك لاحقاً تحويلها لمعركة واستخدام AI لاقتراح ردود.
+                </p>
+
+                <textarea id="journalInput" class="text-input" style="height: 100px;" placeholder="اكتب الفكرة السلبية هنا... (مثلاً: لن أنجح أبداً في المشروع)" aria-label="أدخل فكرتك السلبية"></textarea>
+                <button class="btn btn-primary" onclick="addJournalEntry()"> إضافة للدفتر</button>
+
+                <h3 style="color: var(--gold); margin: 30px 0 15px;">الأفكار المسجلة:</h3>
+                <div id="journalList" aria-live="polite"></div>
+                
+                <button class="btn btn-secondary" onclick="returnToMenu()"> عودة</button>
+            </section>
+
+            <!-- AI Custom Battle Input Screen -->
+            <section id="customBattleScreen" class="screen" aria-label="معركة خاصة">
+                <h2 style="color: var(--purple); text-align: center; margin-bottom: 20px;"> واجه مخاوفك الخاصة</h2>
+                <p style="text-align: center; color: var(--muted); margin-bottom: 20px;">
+                    اكتب الشيء الذي يقلقك الآن (مثلاً: مقابلة عمل، امتحان، شعور بالوحدة)،
+                    وسيقوم الذكاء الاصطناعي بتجسيده كوحش لتهزمه منطقياً.
+                </p>
+                
+                <textarea id="customFearInput" class="text-input" style="height: 120px;" placeholder="أشعر بالقلق من..." aria-label="اكتب ما يقلقك"></textarea>
+                
+                <button id="generateEnemyBtn" class="btn btn-primary" style="background: linear-gradient(135deg, var(--purple) 0%, #6d28d9 100%);" onclick="generateAIEnemy()">
+                    <span id="genBtnText"> استدعاء الوحش</span>
+                    <div id="genLoader" class="loader" style="display:none; vertical-align:middle; margin-right:10px;"></div>
+                </button>
+                <button class="btn btn-secondary" onclick="returnToMenu()"> عودة</button>
+            </section>
+
+            <!-- Study Camp Screen -->
+            <section id="studyCampScreen" class="screen" aria-label="معسكر المذاكرة">
+                <h2 style="color: var(--info); text-align: center; margin-bottom: 20px;"> معسكر المذاكرة</h2>
+                <div class="study-grid">
+                    <div class="tech-card" onclick="selectTech('python', this)" role="button" tabindex="0">
+                        <h3>Python</h3>
+                        <div class="xp-bar-container"><div id="xp-python" class="xp-bar-fill"></div></div>
+                        <small id="lvl-python">Lvl 1</small>
+                    </div>
+                    <div class="tech-card" onclick="selectTech('web', this)" role="button" tabindex="0">
+                        <h3>Web Dev</h3>
+                        <div class="xp-bar-container"><div id="xp-web" class="xp-bar-fill"></div></div>
+                        <small id="lvl-web">Lvl 1</small>
+                    </div>
+                    <div class="tech-card" onclick="selectTech('cs', this)" role="button" tabindex="0">
+                        <h3>C# / Java</h3>
+                        <div class="xp-bar-container"><div id="xp-cs" class="xp-bar-fill"></div></div>
+                        <small id="lvl-cs">Lvl 1</small>
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="startStudySession()"> ابدأ جلسة مذاكرة</button>
+                <button class="btn btn-secondary" onclick="returnToMenu()"> عودة</button>
+            </section>
+
+            <!-- Battle Screen -->
+            <section id="battleScreen" class="screen" aria-label="شاشة المعركة">
+                <div id="phaseIndicator" class="phase-indicator" style="display: none;"></div>
+
+                <div class="battle-container">
+                    <div class="enemy-section">
+                        <div class="enemy-avatar" id="enemyAvatar" aria-hidden="true"></div>
+                        <div class="enemy-name" id="enemyName">العدو</div>
+                        <div class="enemy-type" id="enemyType">نوع العدو</div>
+                        
+                        <div class="health-bars">
+                            <div class="health-bar-container">
+                                <div class="health-label">قوة الفكرة</div>
+                                <div class="health-bar" role="progressbar" aria-label="صحة العدو"><div class="health-fill" id="enemyHealthFill" style="width: 100%"></div></div>
+                            </div>
+                            <div class="health-bar-container">
+                                <div class="health-label">ثباتك النفسي</div>
+                                <div class="health-bar player-health-bar" role="progressbar" aria-label="ثباتك النفسي"><div class="health-fill player-health-fill" id="playerHealthFill" style="width: 100%"></div></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dialogue-area">
+                        <div class="dialogue-speaker" id="dialogueSpeaker">...</div>
+                        <div class="dialogue-text negative" id="dialogueText">...</div>
+                    </div>
+
+                    <!-- AI Assist Button -->
+                    <button id="aiAssistBtn" class="ai-assist-btn" onclick="getAIHelp()">
+                        <span> استلهام رد ذكي (AI)</span>
+                        <div id="aiAssistLoader" class="loader"></div>
+                    </button>
+
+                    <div id="responseOptions" class="response-options" aria-label="خيارات الرد"></div>
+
+                    <div class="battle-log" id="battleLog" aria-label="سجل المعركة"></div>
+
+                    <button class="btn btn-secondary" onclick="surrender()"> انسحاب</button>
+                </div>
+            </section>
+
+            <!-- Boss Selection -->
+            <section id="bossScreen" class="screen" aria-label="قائمة الزعماء">
+                <h2 style="color: var(--danger); text-align: center; margin-bottom: 20px;"> قائمة الزعماء</h2>
+                <div class="menu-grid" id="bossList"></div>
+                <button class="btn btn-secondary" onclick="returnToMenu()"> عودة</button>
+            </section>
+
+            <!-- Stats -->
+            <section id="statsScreen" class="screen" aria-label="الإنجازات">
+                <h2 style="color: var(--gold); text-align: center;"> الإنجازات</h2>
+                <div class="stats-grid" style="margin: 20px 0;">
+                    <div class="stat-box">
+                        <span class="stat-value" id="totalWins">0</span>
+                        <span>انتصارات</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-value" id="streak">0</span>
+                        <span>أيام متتالية</span>
+                    </div>
+                </div>
+                <h3 style="color: var(--info);">الألقاب:</h3>
+                <div id="titlesList" style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;"></div>
+                <button class="btn btn-secondary" onclick="returnToMenu()"> عودة</button>
+            </section>
+
+            <!-- Result -->
+            <section id="resultScreen" class="screen" style="text-align: center; padding: 40px;" aria-label="نتيجة المعركة">
+                <div id="resultIcon" style="font-size: 5em; margin-bottom: 20px;" aria-hidden="true"></div>
+                <h2 id="resultTitle" style="margin-bottom: 10px;">النتيجة</h2>
+                <p id="resultMessage" style="color: var(--muted); margin-bottom: 20px;"></p>
+                <div id="xpGain" style="color: var(--info); font-weight: bold; margin-bottom: 20px; display: none;"></div>
+                <button class="btn btn-primary" onclick="returnToMenu()">عودة للقائمة</button>
+            </section>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-content">
+            <p> معارك الأفكار &mdash; مبنية على أسس العلاج السلوكي المعرفي (CBT)</p>
+            <p class="footer-copy">&copy; 2026 أحمد عاشور. جميع الحقوق محفوظة.</p>
+        </div>
+    </footer>
+
+    <!-- ملف الجافاسكربت -->
+    <script src="script.js"></script>
+</body>
+</html>
