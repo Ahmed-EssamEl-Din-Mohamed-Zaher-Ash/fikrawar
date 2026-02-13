@@ -1058,16 +1058,21 @@ var simState = { messages: [], scenario: "", round: 0 };
 function showScenarioSim() {
     showScreen("scenarioSimScreen");
     simState = { messages: [], scenario: "", round: 0 };
-    document.getElementById("simSetup").style.display = "block";
-    document.getElementById("simChat").style.display = "none";
-    document.getElementById("simResponseArea").style.display = "none";
-    document.getElementById("simFeedback").style.display = "none";
-    document.getElementById("simChat").innerHTML = "";
-    document.getElementById("simScenarioInput").value = "";
+    var _setup = document.getElementById("simSetup");
+    var _chat = document.getElementById("simChat");
+    var _resp = document.getElementById("simResponseArea");
+    var _fb = document.getElementById("simFeedback");
+    var _inp = document.getElementById("simScenarioInput");
+    if (_setup) _setup.style.display = "block";
+    if (_chat) { _chat.style.display = "none"; _chat.innerHTML = ""; }
+    if (_resp) _resp.style.display = "none";
+    if (_fb) _fb.style.display = "none";
+    if (_inp) _inp.value = "";
 }
 
 function simAddMsg(text, type) {
     var chat = document.getElementById("simChat");
+    if (!chat) return;
     var div = document.createElement("div");
     div.className = "sim-msg " + type;
     div.innerHTML = text;
@@ -1076,20 +1081,25 @@ function simAddMsg(text, type) {
 }
 
 async function startScenarioSim() {
-    var scenario = document.getElementById("simScenarioInput").value.trim();
+    var _simInp = document.getElementById("simScenarioInput");
+    if (!_simInp) return;
+    var scenario = _simInp.value.trim();
     if (!scenario) { showNotification("اكتب الموقف الذي تخشاه"); return; }
 
     simState.scenario = scenario;
     simState.round = 0;
     simState.messages = [];
-    document.getElementById("simSetup").style.display = "none";
-    document.getElementById("simChat").style.display = "block";
-    document.getElementById("simResponseArea").style.display = "block";
-    document.getElementById("simChat").innerHTML = "";
+    var _setup = document.getElementById("simSetup");
+    var _chat = document.getElementById("simChat");
+    var _resp = document.getElementById("simResponseArea");
+    if (_setup) _setup.style.display = "none";
+    if (_chat) { _chat.style.display = "block"; _chat.innerHTML = ""; }
+    if (_resp) _resp.style.display = "block";
 
     var startBtn = document.getElementById("simStartBtn");
-    startBtn.disabled = true;
-    document.getElementById("simBtnText").textContent = "جاري التحضير...";
+    if (startBtn) startBtn.disabled = true;
+    var _btnText = document.getElementById("simBtnText");
+    if (_btnText) _btnText.textContent = "جاري التحضير...";
 
     var prompt = "أنت محاكي مواقف CBT. المستخدم يخشى هذا الموقف: \"" + scenario + "\"\n" +
         "ابدأ المحاكاة. العب دور الشخص الآخر في الموقف. ابدأ بجملة افتتاحية واقعية.\n" +
@@ -1097,8 +1107,9 @@ async function startScenarioSim() {
     ;
 
     var result = await AIService.call(prompt);
-    startBtn.disabled = false;
-    document.getElementById("simBtnText").textContent = "🎭 ابدأ المحاكاة";
+    if (startBtn) startBtn.disabled = false;
+    var _btnText2 = document.getElementById("simBtnText");
+    if (_btnText2) _btnText2.textContent = "🎭 ابدأ المحاكاة";
 
     var parsed = AIService._parseJSON(result);
     if (!parsed) { parsed = { dialogue: "مرحباً، كيف يمكنني مساعدتك؟", tip: "خذ نفساً عميقاً وارد بهدوء" }; }
@@ -1112,6 +1123,7 @@ async function startScenarioSim() {
 
 async function sendSimResponse() {
     var input = document.getElementById("simUserResponse");
+    if (!input) return;
     var text = input.value.trim();
     if (!text) { showNotification("اكتب ردك"); return; }
 
@@ -1126,7 +1138,7 @@ async function sendSimResponse() {
     }
 
     var sendBtn = document.getElementById("simRespondBtn");
-    sendBtn.disabled = true;
+    if (sendBtn) sendBtn.disabled = true;
 
     var historyText = simState.messages.map(function(m) { return (m.role === "user" ? "أنت" : "الآخر") + ": " + m.text; }).join("\n");
     var prompt = "أنت محاكي مواقف CBT. الموقف: \"" + simState.scenario + "\"\n" +
@@ -1136,7 +1148,7 @@ async function sendSimResponse() {
     ;
 
     var result = await AIService.call(prompt);
-    sendBtn.disabled = false;
+    if (sendBtn) sendBtn.disabled = false;
 
     var parsed = AIService._parseJSON(result);
     if (!parsed) { parsed = { dialogue: "فهمت. أكمل...", tip: "أحسنت، استمر!" }; }
@@ -1156,7 +1168,8 @@ async function endScenarioSim() {
     ;
 
     simAddMsg("🏁 انتهت المحاكاة! جاري التقييم...", "system");
-    document.getElementById("simResponseArea").style.display = "none";
+    var _respArea = document.getElementById("simResponseArea");
+    if (_respArea) _respArea.style.display = "none";
 
     var result = await AIService.call(prompt);
     var parsed = AIService._parseJSON(result);
@@ -1252,7 +1265,7 @@ async function getMicroAction() {
     var state = document.getElementById("microStateInput").value.trim();
     if (!state) { showNotification("اكتب حالتك الحالية"); return; }
 
-    var btn = document.getElementById("microGetBtn");
+    var btn = document.getElementById("microBtn");
     var txt = document.getElementById("microBtnText");
     var loader = document.getElementById("microLoader");
     btn.disabled = true;
