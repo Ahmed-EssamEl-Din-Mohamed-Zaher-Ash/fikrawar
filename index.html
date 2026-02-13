@@ -153,7 +153,7 @@
                 
                 <button id="generateEnemyBtn" class="btn btn-primary" style="background: linear-gradient(135deg, var(--purple) 0%, #6d28d9 100%);" onclick="generateAIEnemy()">
                     <span id="genBtnText"> استدعاء الوحش</span>
-                    <div id="genLoader" class="loader" style="display:none; vertical-align:middle; margin-right:10px;"></div>
+                    <span id="genLoader" class="loader" style="display:none; vertical-align:middle; margin-right:10px;"></span>
                 </button>
                 <button class="btn btn-secondary" onclick="returnToMenu()"> عودة</button>
             </section>
@@ -212,7 +212,7 @@
                     <!-- AI Assist Button -->
                     <button id="aiAssistBtn" class="ai-assist-btn" onclick="getAIHelp()">
                         <span> استلهام رد ذكي (AI)</span>
-                        <div id="aiAssistLoader" class="loader"></div>
+                        <span id="aiAssistLoader" class="loader"></span>
                     </button>
 
                     <div id="responseOptions" class="response-options" aria-label="خيارات الرد"></div>
@@ -313,7 +313,7 @@
                 </div>
                 <button id="radarAnalyzeBtn" class="btn btn-primary" style="background: linear-gradient(135deg, #06b6d4, #0891b2);" onclick="analyzeNervousState()">
                     <span id="radarBtnText">📡 تحليل الحالة</span>
-                    <div id="radarLoader" class="loader" style="display:none;"></div>
+                    <span id="radarLoader" class="loader" style="display:none;"></span>
                 </button>
                 <div id="radarResult" class="radar-result" style="display:none;"></div>
                 <div id="breathingExercise" class="breathing-exercise" style="display:none;">
@@ -334,7 +334,7 @@
                     <textarea id="labBeliefInput" class="text-input" style="height: 100px;" placeholder="اكتب الفكرة المقيدة... (مثلاً: سأفشل إذا تحدثت أمام الناس)"></textarea>
                     <button id="labDesignBtn" class="btn btn-primary" style="background: linear-gradient(135deg, #f59e0b, #d97706);" onclick="designExperiment()">
                         <span id="labBtnText">🧪 صمّم التجربة</span>
-                        <div id="labLoader" class="loader" style="display:none;"></div>
+                        <span id="labLoader" class="loader" style="display:none;"></span>
                     </button>
                 </div>
                 <div id="labExperiment" class="lab-experiment" style="display:none;"></div>
@@ -356,7 +356,7 @@
                     <textarea id="wellInput" class="text-input" style="height: 80px; margin-bottom: 10px;" placeholder="اكتب الفكرة التلقائية (مثلاً: أخطأت في الكود)"></textarea>
                     <button id="wellSendBtn" class="btn btn-primary" style="background: linear-gradient(135deg, #6366f1, #4f46e5);" onclick="wellSendMessage()">
                         <span id="wellBtnText">⬇️ ابدأ الغوص</span>
-                        <div id="wellLoader" class="loader" style="display:none;"></div>
+                        <span id="wellLoader" class="loader" style="display:none;"></span>
                     </button>
                 </div>
                 <button class="btn btn-secondary" onclick="showResilienceHub()">⬅ عودة للمركز</button>
@@ -370,7 +370,7 @@
                     <textarea id="simScenarioInput" class="text-input" style="height: 100px;" placeholder="صف الموقف... (مثلاً: مواجهة مديري لطلب زيادة)"></textarea>
                     <button id="simStartBtn" class="btn btn-primary" style="background: linear-gradient(135deg, #ec4899, #be185d);" onclick="startScenarioSim()">
                         <span id="simBtnText">🎭 ابدأ المحاكاة</span>
-                        <div id="simStartLoader" class="loader" style="display:none;"></div>
+                        <span id="simStartLoader" class="loader" style="display:none;"></span>
                     </button>
                 </div>
                 <div class="sim-chat" id="simChat" style="display:none;"></div>
@@ -378,7 +378,7 @@
                     <textarea id="simUserResponse" class="text-input" style="height: 80px;" placeholder="اكتب ردك..."></textarea>
                     <button id="simRespondBtn" class="btn btn-primary" style="background: linear-gradient(135deg, #ec4899, #be185d);" onclick="sendSimResponse()">
                         <span id="simRespondText">💬 أرسل ردك</span>
-                        <div id="simRespondLoader" class="loader" style="display:none;"></div>
+                        <span id="simRespondLoader" class="loader" style="display:none;"></span>
                     </button>
                     <button class="btn btn-secondary" onclick="endScenarioSim()">✅ إنهاء المحاكاة</button>
                 </div>
@@ -393,7 +393,7 @@
                 <textarea id="deconInput" class="text-input" style="height: 100px;" placeholder="اكتب الجملة المعممة... (مثلاً: أنا أفشل دائماً)"></textarea>
                 <button id="deconBtn" class="btn btn-primary" style="background: linear-gradient(135deg, #14b8a6, #0d9488);" onclick="deconstructStatement()">
                     <span id="deconBtnText">🔬 فكّك التعميم</span>
-                    <div id="deconLoader" class="loader" style="display:none;"></div>
+                    <span id="deconLoader" class="loader" style="display:none;"></span>
                 </button>
                 <div id="deconResult" class="decon-result" style="display:none;"></div>
                 <button class="btn btn-secondary" onclick="showResilienceHub()">⬅ عودة للمركز</button>
@@ -408,7 +408,7 @@
                     <textarea id="microStateInput" class="text-input" style="height: 80px;" placeholder="صف حالتك باختصار... (مثلاً: متجمد تماماً، لا أستطيع الحركة)"></textarea>
                     <button id="microBtn" class="btn btn-primary" style="background: linear-gradient(135deg, #f97316, #ea580c);" onclick="getMicroAction()">
                         <span id="microBtnText">👣 أعطني خطوة واحدة فقط</span>
-                        <div id="microLoader" class="loader" style="display:none;"></div>
+                        <span id="microLoader" class="loader" style="display:none;"></span>
                     </button>
                 </div>
                 <div id="microActionCard" class="micro-action-card" style="display:none;">
