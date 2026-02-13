@@ -1059,7 +1059,9 @@ function showScenarioSim() {
     showScreen("scenarioSimScreen");
     simState = { messages: [], scenario: "", round: 0 };
     document.getElementById("simSetup").style.display = "block";
-    document.getElementById("simChatSection").style.display = "none";
+    document.getElementById("simChat").style.display = "none";
+    document.getElementById("simResponseArea").style.display = "none";
+    document.getElementById("simFeedback").style.display = "none";
     document.getElementById("simChat").innerHTML = "";
     document.getElementById("simScenarioInput").value = "";
 }
@@ -1081,12 +1083,13 @@ async function startScenarioSim() {
     simState.round = 0;
     simState.messages = [];
     document.getElementById("simSetup").style.display = "none";
-    document.getElementById("simChatSection").style.display = "block";
+    document.getElementById("simChat").style.display = "block";
+    document.getElementById("simResponseArea").style.display = "block";
     document.getElementById("simChat").innerHTML = "";
 
     var startBtn = document.getElementById("simStartBtn");
     startBtn.disabled = true;
-    startBtn.querySelector(".btn-text").textContent = "جاري التحضير...";
+    document.getElementById("simBtnText").textContent = "جاري التحضير...";
 
     var prompt = "أنت محاكي مواقف CBT. المستخدم يخشى هذا الموقف: \"" + scenario + "\"\n" +
         "ابدأ المحاكاة. العب دور الشخص الآخر في الموقف. ابدأ بجملة افتتاحية واقعية.\n" +
@@ -1095,7 +1098,7 @@ async function startScenarioSim() {
 
     var result = await AIService.call(prompt);
     startBtn.disabled = false;
-    startBtn.querySelector(".btn-text").textContent = "🎭 ابدأ المحاكاة";
+    document.getElementById("simBtnText").textContent = "🎭 ابدأ المحاكاة";
 
     var parsed = AIService._parseJSON(result);
     if (!parsed) { parsed = { dialogue: "مرحباً، كيف يمكنني مساعدتك؟", tip: "خذ نفساً عميقاً وارد بهدوء" }; }
@@ -1108,7 +1111,7 @@ async function startScenarioSim() {
 }
 
 async function sendSimResponse() {
-    var input = document.getElementById("simResponseInput");
+    var input = document.getElementById("simUserResponse");
     var text = input.value.trim();
     if (!text) { showNotification("اكتب ردك"); return; }
 
@@ -1122,7 +1125,7 @@ async function sendSimResponse() {
         return;
     }
 
-    var sendBtn = document.getElementById("simSendBtn");
+    var sendBtn = document.getElementById("simRespondBtn");
     sendBtn.disabled = true;
 
     var historyText = simState.messages.map(function(m) { return (m.role === "user" ? "أنت" : "الآخر") + ": " + m.text; }).join("\n");
@@ -1153,7 +1156,7 @@ async function endScenarioSim() {
     ;
 
     simAddMsg("🏁 انتهت المحاكاة! جاري التقييم...", "system");
-    document.getElementById("simResponseSection").style.display = "none";
+    document.getElementById("simResponseArea").style.display = "none";
 
     var result = await AIService.call(prompt);
     var parsed = AIService._parseJSON(result);
