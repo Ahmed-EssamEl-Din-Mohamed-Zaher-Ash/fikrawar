@@ -1,4 +1,4 @@
-﻿// ==================== API PROXY CONFIGURATION ====================
+// ==================== API PROXY CONFIGURATION ====================
 //  مهم: لا تضع مفتاح API مباشرة في الكود!
 // استخدم Cloudflare Worker كوسيط آمن (انظر ملف worker.js)
 // غيّر هذا الرابط إلى رابط الـ Worker الخاص بك بعد النشر
@@ -779,3 +779,517 @@ function surrender() {
 }
 
 console.log(" FikraWar v2 loaded successfully!");
+
+
+// ======================================================================
+// RESILIENCE HUB - NEW SECTION
+// ======================================================================
+
+// ==================== RESILIENCE HUB ====================
+
+function showResilienceHub() {
+    showScreen("resilienceHubScreen");
+}
+
+// ==================== 1. NERVOUS SYSTEM RADAR ====================
+function showNervousRadar() {
+    showScreen("nervousRadarScreen");
+    document.querySelectorAll('input[name="symptom"]').forEach(function(cb) { cb.checked = false; });
+    document.getElementById("radarResult").style.display = "none";
+    document.getElementById("breathingExercise").style.display = "none";
+}
+
+async function analyzeNervousState() {
+    var checked = [];
+    document.querySelectorAll('input[name="symptom"]:checked').forEach(function(cb) { checked.push(cb.value); });
+    if (checked.length === 0) { showNotification("اختر عرضاً واحداً على الأقل"); return; }
+
+    var sympMap = {
+        heartfast: "ضربات قلب سريعة",
+        muscletense: "شد عضلي",
+        breathing: "صعوبة تنفس",
+        numb: "تنميل أو برودة",
+        dizzy: "دوخة",
+        stomach: "اضطراب معدة",
+        shake: "رجفة",
+        frozen: "تجمد تام"
+    };
+    var sympText = checked.map(function(k) { return sympMap[k] || k; }).join(", ");
+
+    var btn = document.getElementById("radarAnalyzeBtn");
+    var txt = document.getElementById("radarBtnText");
+    var loader = document.getElementById("radarLoader");
+    btn.disabled = true;
+    txt.textContent = "جاري التحليل...";
+    loader.style.display = "inline-block";
+
+    var prompt = "أنت معالج نفسي متخصص في علم الأعصاب. المستخدم يشعر ب: " + sympText + "\n\n" +
+        "حلّل هل هو في حالة تجمد (freeze) أو هروب (flight) أو قتال (fight).\n" +
+        "ارجع JSON فقط (بدون markdown):\n" +
+        JSON.stringify({
+            state: "تجمد/هروب/قتال",
+            stateEn: "freeze/flight/fight",
+            explanation: "شرح بسيط بالعربية للحالة",
+            exercise: "تمرين تنفس أو تأريض مناسب بالعربية",
+            tip: "نصيحة قصيرة"
+        })
+    ;
+
+    var result = await AIService.call(prompt);
+    btn.disabled = false;
+    txt.textContent = "📡 تحليل الحالة";
+    loader.style.display = "none";
+
+    var parsed = AIService._parseJSON(result);
+    if (!parsed) {
+        parsed = { state: "تجمد", stateEn: "freeze", explanation: "يبدو أن جهازك العصبي في حالة تنبيه.", exercise: "تنفس بطيء: شهيق 4 ثوان، حبس 4 ثوان، زفير 4 ثوان.", tip: "تذكر: هذا مؤقت وسيمر." };
+    }
+
+    var stateClass = "state-freeze";
+    if (parsed.stateEn === "flight") stateClass = "state-flight";
+    if (parsed.stateEn === "fight") stateClass = "state-fight";
+
+    var resultDiv = document.getElementById("radarResult");
+    resultDiv.style.display = "block";
+    resultDiv.innerHTML = '<div class="radar-state-badge ' + stateClass + '">' + parsed.state + '</div>' +
+        '<p style="margin-bottom:12px">' + escapeHTML(parsed.explanation) + '</p>' +
+        '<p style="color:var(--accent);font-weight:700">🌿 ' + escapeHTML(parsed.exercise) + '</p>' +
+        '<p style="color:var(--gold);margin-top:10px">💡 ' + escapeHTML(parsed.tip) + '</p>';
+
+    document.getElementById("breathingExercise").style.display = "block";
+}
+
+var breathingInterval = null;
+function startBreathingExercise() {
+    var circle = document.getElementById("breathingCircle");
+    var textEl = document.getElementById("breathingText");
+    var timerEl = document.getElementById("breathingTimer");
+    var btn = document.getElementById("startBreathBtn");
+    btn.disabled = true;
+    var totalTime = 30;
+    var elapsed = 0;
+    var phases = [
+        { name: "شهيق", cls: "inhale", dur: 4 },
+        { name: "حبس", cls: "hold", dur: 4 },
+        { name: "زفير", cls: "exhale", dur: 4 }
+    ];
+    var phaseIdx = 0;
+    var phaseTime = 0;
+
+    if (breathingInterval) clearInterval(breathingInterval);
+    breathingInterval = setInterval(function() {
+        elapsed++;
+        phaseTime++;
+        var remaining = totalTime - elapsed;
+        timerEl.textContent = remaining + " ثانية";
+
+        var p = phases[phaseIdx];
+        circle.className = "breathing-circle " + p.cls;
+        textEl.textContent = p.name + " (" + (p.dur - phaseTime + 1) + ")";
+
+        if (phaseTime >= p.dur) {
+            phaseTime = 0;
+            phaseIdx = (phaseIdx + 1) % phases.length;
+        }
+
+        if (elapsed >= totalTime) {
+            clearInterval(breathingInterval);
+            circle.className = "breathing-circle";
+            textEl.textContent = "✅ أحسنت!";
+            timerEl.textContent = "انتهى";
+            btn.disabled = false;
+            showNotification("🌿 أحسنت! جهازك العصبي أهدأ الآن");
+        }
+    }, 1000);
+}
+
+// ==================== 2. BEHAVIORAL EXPERIMENT LAB ====================
+var currentExperimentBelief = "";
+function showBehaviorLab() {
+    showScreen("behaviorLabScreen");
+    document.getElementById("labStep1").style.display = "block";
+    document.getElementById("labExperiment").style.display = "none";
+    document.getElementById("labStep2").style.display = "none";
+    document.getElementById("labComparison").style.display = "none";
+    document.getElementById("labBeliefInput").value = "";
+}
+
+async function designExperiment() {
+    var belief = document.getElementById("labBeliefInput").value.trim();
+    if (!belief) { showNotification("اكتب الفكرة المقيدة أولاً"); return; }
+    currentExperimentBelief = belief;
+
+    var btn = document.getElementById("labDesignBtn");
+    var txt = document.getElementById("labBtnText");
+    var loader = document.getElementById("labLoader");
+    btn.disabled = true;
+    txt.textContent = "جاري تصميم التجربة...";
+    loader.style.display = "inline-block";
+
+    var prompt = "أنت معالج CBT. المستخدم لديه فكرة مقيدة: \"" + belief + "\"\n" +
+        "صمم تجربة سلوكية صغيرة لاختبار هذه الفكرة.\nارجع JSON فقط:\n" +
+        JSON.stringify({
+            experiment: "وصف التجربة بالعربية",
+            steps: ["خطوة 1", "خطوة 2", "خطوة 3"],
+            prediction: "ماذا تتوقع أن يحدث حسب الفكرة السلبية",
+            realistic: "ما الأرجح أن يحدث فعلاً"
+        })
+    ;
+
+    var result = await AIService.call(prompt);
+    btn.disabled = false;
+    txt.textContent = "🧪 صمّم التجربة";
+    loader.style.display = "none";
+
+    var parsed = AIService._parseJSON(result);
+    if (!parsed) {
+        parsed = { experiment: "جرب القيام بخطوة صغيرة مما تخشاه", steps: ["اختر موقفاً بسيطاً", "نفذه خلال 24 ساعة", "سجل النتيجة"], prediction: "سأفشل", realistic: "الأرجح أنه سيمر بشكل طبيعي" };
+    }
+
+    var labDiv = document.getElementById("labExperiment");
+    var stepsHTML = (parsed.steps || []).map(function(s, i) { return '<div class="experiment-step">' + (i+1) + ". " + escapeHTML(s) + "</div>"; }).join("");
+    labDiv.innerHTML = '<h3>🧪 ' + escapeHTML(parsed.experiment) + '</h3>' + stepsHTML +
+        '<p style="color:var(--danger);margin-top:12px">😨 توقعك السلبي: ' + escapeHTML(parsed.prediction) + '</p>' +
+        '<p style="color:var(--accent)">🌟 الأرجح: ' + escapeHTML(parsed.realistic) + '</p>';
+    labDiv.style.display = "block";
+    document.getElementById("labStep2").style.display = "block";
+    window._labPrediction = parsed.prediction;
+    window._labRealistic = parsed.realistic;
+}
+
+function recordExperimentResult() {
+    var result = document.getElementById("labResultInput").value.trim();
+    if (!result) { showNotification("اكتب ماذا حدث فعلاً"); return; }
+
+    var compDiv = document.getElementById("labComparison");
+    compDiv.innerHTML = '<h3 style="color:var(--accent);margin-bottom:10px">📊 المقارنة</h3>' +
+        '<div class="comparison-row">' +
+        '<div class="comp-box prediction"><div class="comp-label">😨 توقعك السلبي</div><p>' + escapeHTML(window._labPrediction || "") + '</p></div>' +
+        '<div class="comp-box reality"><div class="comp-label">✅ ما حدث فعلاً</div><p>' + escapeHTML(result) + '</p></div>' +
+        '</div>' +
+        '<p style="color:var(--gold);text-align:center;margin-top:15px;font-weight:700">💡 هل لاحظت الفرق؟ الأفكار السلبية غالباً تبالغ في التوقعات.</p>';
+    compDiv.style.display = "block";
+    document.getElementById("labStep2").style.display = "none";
+    showNotification("✅ أحسنت! هذا دليل ضد الفكرة السلبية");
+}
+
+// ==================== 3. CORE BELIEF WELL ====================
+var wellHistory = [];
+var wellDepth = 0;
+function showCoreBeliefWell() {
+    showScreen("coreBeliefScreen");
+    wellHistory = [];
+    wellDepth = 0;
+    document.getElementById("wellChat").innerHTML = "";
+    document.getElementById("wellInput").value = "";
+    document.getElementById("wellBtnText").textContent = "⬇️ ابدأ الغوص";
+    document.getElementById("wellInput").placeholder = "اكتب الفكرة التلقائية (مثلاً: أخطأت في الكود)";
+}
+
+function wellAddMsg(text, type) {
+    var chat = document.getElementById("wellChat");
+    var div = document.createElement("div");
+    div.className = "well-msg " + type;
+    div.textContent = text;
+    chat.appendChild(div);
+    if (type === "ai" && wellDepth > 0) {
+        var arrow = document.createElement("div");
+        arrow.className = "well-arrow";
+        arrow.textContent = "⬇️";
+        chat.appendChild(arrow);
+    }
+    chat.scrollTop = chat.scrollHeight;
+}
+
+async function wellSendMessage() {
+    var input = document.getElementById("wellInput");
+    var text = input.value.trim();
+    if (!text) { showNotification("اكتب إجابتك"); return; }
+
+    wellAddMsg(text, "user");
+    wellHistory.push(text);
+    wellDepth++;
+    input.value = "";
+
+    var btn = document.getElementById("wellSendBtn");
+    var txt = document.getElementById("wellBtnText");
+    var loader = document.getElementById("wellLoader");
+    btn.disabled = true;
+    txt.textContent = "جاري الغوص...";
+    loader.style.display = "inline-block";
+
+    var historyText = wellHistory.map(function(h, i) { return "المستوى " + (i+1) + ": " + h; }).join("\n");
+    var prompt = "أنت معالج CBT تستخدم تقنية السهم الهابط (Downward Arrow).\n" +
+        "المستخدم غاص " + wellDepth + " مستويات:\n" + historyText + "\n\n" +
+        "إذا كان العمق < 4، اسأل \"وماذا يعني هذا عنك؟\" بصيغة مختلفة.\n" +
+        "إذا كان العمق >= 4، حدد المعتقد الجوهري وواجهه.\n" +
+        "ارجع JSON فقط:\n" +
+        JSON.stringify({ question: "السؤال التالي أو فارغ", coreBelief: "المعتقد الجوهري إذا وصلنا أو فارغ", challenge: "مواجهة المعتقد إذا وصلنا أو فارغ" })
+    ;
+
+    var result = await AIService.call(prompt);
+    btn.disabled = false;
+    loader.style.display = "none";
+
+    var parsed = AIService._parseJSON(result);
+    if (!parsed) {
+        parsed = wellDepth < 4 ? { question: "وماذا يعني هذا عنك كشخص؟", coreBelief: "", challenge: "" } : { question: "", coreBelief: "أنا غير كفء", challenge: "هذا معتقد وليس حقيقة. لديك إنجازات تثبت عكس ذلك." };
+    }
+
+    if (parsed.coreBelief && parsed.coreBelief.length > 0) {
+        wellAddMsg("🎯 المعتقد الجوهري: " + parsed.coreBelief, "core");
+        if (parsed.challenge) {
+            wellAddMsg("💪 المواجهة: " + parsed.challenge, "ai");
+        }
+        txt.textContent = "✅ اكتمل الغوص!";
+        input.placeholder = "اكتمل! يمكنك البدء من جديد";
+        wellHistory = [];
+        wellDepth = 0;
+        showNotification("🎯 وصلنا للجذر!");
+    } else if (parsed.question) {
+        wellAddMsg(parsed.question, "ai");
+        txt.textContent = "⬇️ أجب واغوص أكثر";
+        input.placeholder = "أجب على السؤال...";
+    }
+}
+
+// ==================== 4. SCENARIO SIMULATOR ====================
+var simState = { messages: [], scenario: "", round: 0 };
+function showScenarioSim() {
+    showScreen("scenarioSimScreen");
+    simState = { messages: [], scenario: "", round: 0 };
+    document.getElementById("simSetup").style.display = "block";
+    document.getElementById("simChatSection").style.display = "none";
+    document.getElementById("simChat").innerHTML = "";
+    document.getElementById("simScenarioInput").value = "";
+}
+
+function simAddMsg(text, type) {
+    var chat = document.getElementById("simChat");
+    var div = document.createElement("div");
+    div.className = "sim-msg " + type;
+    div.innerHTML = text;
+    chat.appendChild(div);
+    chat.scrollTop = chat.scrollHeight;
+}
+
+async function startScenarioSim() {
+    var scenario = document.getElementById("simScenarioInput").value.trim();
+    if (!scenario) { showNotification("اكتب الموقف الذي تخشاه"); return; }
+
+    simState.scenario = scenario;
+    simState.round = 0;
+    simState.messages = [];
+    document.getElementById("simSetup").style.display = "none";
+    document.getElementById("simChatSection").style.display = "block";
+    document.getElementById("simChat").innerHTML = "";
+
+    var startBtn = document.getElementById("simStartBtn");
+    startBtn.disabled = true;
+    startBtn.querySelector(".btn-text").textContent = "جاري التحضير...";
+
+    var prompt = "أنت محاكي مواقف CBT. المستخدم يخشى هذا الموقف: \"" + scenario + "\"\n" +
+        "ابدأ المحاكاة. العب دور الشخص الآخر في الموقف. ابدأ بجملة افتتاحية واقعية.\n" +
+        "ارجع JSON:\n" + JSON.stringify({ dialogue: "جملة الشخص الآخر", tip: "نصيحة CBT للرد" })
+    ;
+
+    var result = await AIService.call(prompt);
+    startBtn.disabled = false;
+    startBtn.querySelector(".btn-text").textContent = "🎭 ابدأ المحاكاة";
+
+    var parsed = AIService._parseJSON(result);
+    if (!parsed) { parsed = { dialogue: "مرحباً، كيف يمكنني مساعدتك؟", tip: "خذ نفساً عميقاً وارد بهدوء" }; }
+
+    simState.messages.push({ role: "other", text: parsed.dialogue });
+    simAddMsg("🎭 " + escapeHTML(parsed.dialogue), "other");
+    if (parsed.tip) {
+        simAddMsg("💡 " + escapeHTML(parsed.tip), "tip");
+    }
+}
+
+async function sendSimResponse() {
+    var input = document.getElementById("simResponseInput");
+    var text = input.value.trim();
+    if (!text) { showNotification("اكتب ردك"); return; }
+
+    simState.round++;
+    simState.messages.push({ role: "user", text: text });
+    simAddMsg(escapeHTML(text), "user");
+    input.value = "";
+
+    if (simState.round >= 4) {
+        endScenarioSim();
+        return;
+    }
+
+    var sendBtn = document.getElementById("simSendBtn");
+    sendBtn.disabled = true;
+
+    var historyText = simState.messages.map(function(m) { return (m.role === "user" ? "أنت" : "الآخر") + ": " + m.text; }).join("\n");
+    var prompt = "أنت محاكي مواقف CBT. الموقف: \"" + simState.scenario + "\"\n" +
+        "الحوار حتى الآن:\n" + historyText + "\n\n" +
+        "استمر في دور الشخص الآخر. ارجع JSON:\n" +
+        JSON.stringify({ dialogue: "رد الشخص الآخر", tip: "نصيحة CBT" })
+    ;
+
+    var result = await AIService.call(prompt);
+    sendBtn.disabled = false;
+
+    var parsed = AIService._parseJSON(result);
+    if (!parsed) { parsed = { dialogue: "فهمت. أكمل...", tip: "أحسنت، استمر!" }; }
+
+    simState.messages.push({ role: "other", text: parsed.dialogue });
+    simAddMsg("🎭 " + escapeHTML(parsed.dialogue), "other");
+    if (parsed.tip) {
+        simAddMsg("💡 " + escapeHTML(parsed.tip), "tip");
+    }
+}
+
+async function endScenarioSim() {
+    var historyText = simState.messages.map(function(m) { return (m.role === "user" ? "أنت" : "الآخر") + ": " + m.text; }).join("\n");
+    var prompt = "أنت معالج CBT. هذا حوار محاكاة موقف: \"" + simState.scenario + "\"\n" +
+        historyText + "\n\nقيّم أداء المستخدم. ارجع JSON:\n" +
+        JSON.stringify({ score: "8/10", strengths: ["نقطة قوة"], improvements: ["ما يمكن تحسينه"], encouragement: "رسالة تشجيعية" })
+    ;
+
+    simAddMsg("🏁 انتهت المحاكاة! جاري التقييم...", "system");
+    document.getElementById("simResponseSection").style.display = "none";
+
+    var result = await AIService.call(prompt);
+    var parsed = AIService._parseJSON(result);
+    if (!parsed) { parsed = { score: "7/10", strengths: ["حاولت التعامل بشجاعة"], improvements: ["حاول التعبير عن مشاعرك أكثر"], encouragement: "أحسنت! كل محاولة تزيد ثقتك." }; }
+
+    var feedbackHTML = '<div style="text-align:center;margin:15px 0">' +
+        '<div style="font-size:2.5rem;color:var(--gold)">' + escapeHTML(parsed.score || "7/10") + '</div>' +
+        '<div style="color:var(--accent);font-weight:700;margin:10px 0">نقاط القوة:</div>';
+    (parsed.strengths || []).forEach(function(s) { feedbackHTML += '<div style="color:var(--success)">✅ ' + escapeHTML(s) + '</div>'; });
+    feedbackHTML += '<div style="color:var(--gold);font-weight:700;margin:10px 0">للتحسين:</div>';
+    (parsed.improvements || []).forEach(function(s) { feedbackHTML += '<div style="color:var(--danger)">🔧 ' + escapeHTML(s) + '</div>'; });
+    if (parsed.encouragement) {
+        feedbackHTML += '<div style="color:var(--accent);margin-top:15px;font-size:1.1rem">💪 ' + escapeHTML(parsed.encouragement) + '</div>';
+    }
+    feedbackHTML += '</div>';
+    simAddMsg(feedbackHTML, "feedback");
+    showNotification("🏆 أحسنت! كل تدريب يزيد ثقتك");
+}
+
+// ==================== 5. LOGIC DECONSTRUCTOR ====================
+function showLogicDeconstructor() {
+    showScreen("logicDeconScreen");
+    document.getElementById("deconInput").value = "";
+    document.getElementById("deconResult").innerHTML = "";
+    document.getElementById("deconResult").style.display = "none";
+}
+
+async function deconstructStatement() {
+    var statement = document.getElementById("deconInput").value.trim();
+    if (!statement) { showNotification("اكتب جملة التعميم"); return; }
+
+    var btn = document.getElementById("deconBtn");
+    var txt = document.getElementById("deconBtnText");
+    var loader = document.getElementById("deconLoader");
+    btn.disabled = true;
+    txt.textContent = "جاري التفكيك...";
+    loader.style.display = "inline-block";
+
+    var prompt = "أنت معالج CBT. المستخدم قال: \"" + statement + "\"\n" +
+        "هذه جملة تعميم (دائماً/أبداً/كل/لا أحد). فككها منطقياً.\n" +
+        "ارجع JSON فقط:\n" +
+        JSON.stringify({
+            original: "الجملة الأصلية",
+            generalization_type: "نوع التعميم",
+            evidence_for: ["دليل يدعمها"],
+            evidence_against: ["دليل يناقضها"],
+            exceptions: ["استثناءات"],
+            balanced: "جملة متوازنة بديلة"
+        })
+    ;
+
+    var result = await AIService.call(prompt);
+    btn.disabled = false;
+    txt.textContent = "🔬 فكّك الجملة";
+    loader.style.display = "none";
+
+    var parsed = AIService._parseJSON(result);
+    if (!parsed) {
+        parsed = { original: statement, generalization_type: "تعميم مفرط", evidence_for: ["ربما حدث مرة أو مرتين"], evidence_against: ["لكن ليس دائماً"], exceptions: ["فكر في المرات التي لم يحدث فيها"], balanced: "أحياناً يحدث هذا، لكن ليس دائماً" };
+    }
+
+    var resDiv = document.getElementById("deconResult");
+    var html = '<div class="decon-original">🗣️ ' + escapeHTML(parsed.original || statement) + '</div>';
+    html += '<div class="decon-type">نوع التشوه: ' + escapeHTML(parsed.generalization_type || "") + '</div>';
+
+    html += '<div class="decon-section"><div class="decon-section-title">✅ أدلة مؤيدة</div>';
+    (parsed.evidence_for || []).forEach(function(e) { html += '<div class="decon-item for">' + escapeHTML(e) + '</div>'; });
+    html += '</div>';
+
+    html += '<div class="decon-section"><div class="decon-section-title">❌ أدلة معارضة</div>';
+    (parsed.evidence_against || []).forEach(function(e) { html += '<div class="decon-item against">' + escapeHTML(e) + '</div>'; });
+    html += '</div>';
+
+    html += '<div class="decon-section"><div class="decon-section-title">✨ استثناءات</div>';
+    (parsed.exceptions || []).forEach(function(e) { html += '<div class="decon-item exception">' + escapeHTML(e) + '</div>'; });
+    html += '</div>';
+
+    html += '<div class="decon-balanced">⚖️ الجملة المتوازنة: ' + escapeHTML(parsed.balanced || "") + '</div>';
+    resDiv.innerHTML = html;
+    resDiv.style.display = "block";
+}
+
+// ==================== 6. MICRO-ACTION BUDDY ====================
+var currentMicroAction = "";
+function showMicroAction() {
+    showScreen("microActionScreen");
+    document.getElementById("microStateInput").value = "";
+    document.getElementById("microActionCard").style.display = "none";
+    document.getElementById("microCelebration").style.display = "none";
+}
+
+async function getMicroAction() {
+    var state = document.getElementById("microStateInput").value.trim();
+    if (!state) { showNotification("اكتب حالتك الحالية"); return; }
+
+    var btn = document.getElementById("microGetBtn");
+    var txt = document.getElementById("microBtnText");
+    var loader = document.getElementById("microLoader");
+    btn.disabled = true;
+    txt.textContent = "جاري التفكير...";
+    loader.style.display = "inline-block";
+
+    var prompt = "أنت رفيق CBT. المستخدم يشعر ب: \"" + state + "\"\n" +
+        "أعطه خطوة جسدية صغيرة جداً (مجهرية) يمكنه فعلها الآن في 30 ثانية أو أقل.\n" +
+        "ارجع JSON:\n" +
+        JSON.stringify({ action: "الخطوة المجهرية", why: "لماذا تساعد", duration: "المدة بالثواني", encouragement: "رسالة تشجيع" })
+    ;
+
+    var result = await AIService.call(prompt);
+    btn.disabled = false;
+    txt.textContent = "🦶 أعطني خطوة";
+    loader.style.display = "none";
+
+    var parsed = AIService._parseJSON(result);
+    if (!parsed) {
+        parsed = { action: "اضغط على يديك بقوة لمدة 5 ثواني", why: "يعيد انتباهك للجسد", duration: "5", encouragement: "أنت تفعل شيئاً لنفسك!" };
+    }
+
+    currentMicroAction = parsed.action || "";
+    var card = document.getElementById("microActionCard");
+    card.innerHTML = '<div class="micro-action-icon">🦶</div>' +
+        '<div class="micro-action-text">' + escapeHTML(parsed.action || "") + '</div>' +
+        '<div class="micro-action-why">💡 ' + escapeHTML(parsed.why || "") + '</div>' +
+        '<div class="micro-action-duration">⏱️ ' + escapeHTML(parsed.duration || "10") + ' ثانية</div>' +
+        '<button class="btn btn-accent" onclick="completeMicroAction()" style="margin-top:15px">✅ أنجزتها!</button>';
+    card.style.display = "block";
+    document.getElementById("microCelebration").style.display = "none";
+}
+
+function completeMicroAction() {
+    var celeb = document.getElementById("microCelebration");
+    celeb.innerHTML = '<div class="micro-celebration-emoji">🎉</div>' +
+        '<div class="micro-celebration-text">رائع! خطوة صغيرة = تغيير كبير</div>' +
+        '<div style="color:var(--text-secondary);margin-top:8px">عقلك الآن يعرف أنك تستطيع التحرك رغم الإحساس</div>';
+    celeb.style.display = "block";
+    document.getElementById("microActionCard").style.display = "none";
+    showNotification("🎉 أحسنت! هذه هي البداية");
+}
+
