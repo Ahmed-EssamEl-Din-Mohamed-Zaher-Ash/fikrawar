@@ -1309,3 +1309,76 @@ function completeMicroAction() {
     showNotification("🎉 أحسنت! هذه هي البداية");
 }
 
+
+
+// ======================================================================
+// LOADING SCREEN & NAVBAR  v3 UI Additions
+// ======================================================================
+
+// ==================== LOADING SCREEN ====================
+(function initLoadingScreen() {
+    const bar = document.getElementById('loadingBarFill');
+    const screen = document.getElementById('loadingScreen');
+    if (!bar || !screen) return;
+
+    let progress = 0;
+    const interval = setInterval(() => {
+        progress += Math.random() * 15 + 5;
+        if (progress >= 100) {
+            progress = 100;
+            clearInterval(interval);
+            bar.style.width = '100%';
+            setTimeout(() => {
+                screen.classList.add('hidden');
+            }, 400);
+        }
+        bar.style.width = progress + '%';
+    }, 200);
+
+    // Fallback: force hide after 3s
+    setTimeout(() => {
+        clearInterval(interval);
+        bar.style.width = '100%';
+        screen.classList.add('hidden');
+    }, 3000);
+})();
+
+// ==================== NAVBAR ====================
+(function initNavbar() {
+    const toggle = document.getElementById('navToggle');
+    const links = document.getElementById('navLinks');
+    const overlay = document.getElementById('navOverlay');
+    const navbar = document.getElementById('mainNavbar');
+
+    if (!toggle || !links) return;
+
+    toggle.addEventListener('click', () => {
+        const isOpen = links.classList.contains('open');
+        links.classList.toggle('open');
+        toggle.classList.toggle('active');
+        if (overlay) overlay.classList.toggle('show');
+        toggle.setAttribute('aria-expanded', !isOpen);
+    });
+
+    if (overlay) {
+        overlay.addEventListener('click', closeNav);
+    }
+
+    // Scroll effect
+    if (navbar) {
+        window.addEventListener('scroll', () => {
+            navbar.classList.toggle('scrolled', window.scrollY > 30);
+        }, { passive: true });
+    }
+})();
+
+function closeNav() {
+    const links = document.getElementById('navLinks');
+    const toggle = document.getElementById('navToggle');
+    const overlay = document.getElementById('navOverlay');
+    if (links) links.classList.remove('open');
+    if (toggle) { toggle.classList.remove('active'); toggle.setAttribute('aria-expanded', 'false'); }
+    if (overlay) overlay.classList.remove('show');
+}
+
+console.log(" FikraWar v3  Glassmorphism UI loaded!");
